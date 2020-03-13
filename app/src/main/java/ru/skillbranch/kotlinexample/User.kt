@@ -8,30 +8,39 @@ import java.security.SecureRandom
 import java.util.*
 
 class User private constructor(
-    val firstName: String,
-    val lastName: String?,
-    email: String? = null,
-    rawPhone: String? = null,
-    meta: Map<String, Any>? = null
+    private val firstName: String,
+    private val lastName: String?,
+    private val email: String? = null,
+    private val rawPhone: String? = null,
+    private val meta: Map<String, Any>? = null
 ) {
     val userInfo: String
+    get() = """
+                  firstName: $firstName
+                  lastName: $lastName
+                  login: $login
+                  fullName: $fullName
+                  initials: $initials
+                  email: $email
+                  phone: $phone
+                  meta: $meta
+            """.trimIndent()
 
     private val fullName: String
         @SuppressLint("DefaultLocale")
         get() = listOfNotNull(firstName, lastName)
-            .joinToString { " " }
+            .joinToString(" ")
             .capitalize()
 
     private val initials: String
         get() = listOfNotNull(firstName, lastName)
             .map { it.first().toUpperCase() }
-            .joinToString { " " }
+            .joinToString ( " " )
 
     private var phone: String? = null
         set(value) {
             field = value?.replace("[^+\\d]".toRegex(), "")
         }
-
 
     private var _login: String? = null
     var login: String
@@ -83,16 +92,6 @@ class User private constructor(
         check(!email.isNullOrBlank() || !rawPhone.isNullOrBlank()) { "Email or phone must not be blank" }
         phone = rawPhone
         login = email ?: phone!!
-        userInfo = """
-                  firstName: $firstName
-                  lastName: $lastName
-                  login: $login
-                  fullName: $fullName
-                  initials: $initials
-                  email: $email
-                  phone: $phone
-                  meta: $meta
-            """.trimIndent()
     }
 
     fun checkPassword(password: String) = encrypt(password) == passwordHash
@@ -146,11 +145,11 @@ class User private constructor(
 
             return when {
                 !phone.isNullOrBlank() -> User(firstName, lastName, phone)
-                !email.isNullOrBlank() -> User(
-                    firstName,
-                    lastName,
-                    email,
-                    password
+                !email.isNullOrBlank() && !password.isNullOrBlank() -> User(
+                    firstName = firstName,
+                    lastName = lastName,
+                    email = email,
+                    password = password
                 )
                 else -> throw IllegalArgumentException("Email or phone must not be blank")
             }
