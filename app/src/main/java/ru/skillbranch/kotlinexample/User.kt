@@ -37,7 +37,7 @@ class User private constructor(
             .map { it.first().toUpperCase() }
             .joinToString ( " " )
 
-    private var phone: String? = null
+    var phone: String? = null
         set(value) {
             field = value?.replace("[^+\\d]".toRegex(), "")
         }
@@ -81,6 +81,7 @@ class User private constructor(
         rawPhone = rawPhone,
         meta = mapOf("auth" to "sms")
     ) {
+        if (!isPhoneValid(rawPhone)) throw IllegalArgumentException("Phone is incorrect")
         val code = generateAccessCode()
         passwordHash = encrypt(code)
         accessCode = code
@@ -103,6 +104,12 @@ class User private constructor(
         } else {
             throw IllegalArgumentException("Wrong old password")
         }
+    }
+
+    private fun isPhoneValid(phone: String): Boolean {
+        val digits = phone.filter { it.isDigit() }
+        if (digits.length != 11 || !phone.startsWith("+")) return false
+        return true
     }
 
     private fun encrypt(password: String): String {
