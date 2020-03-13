@@ -10,6 +10,9 @@ object UserHolder {
         email: String,
         password: String
     ): User = User.makeUser(fullName, email = email, password = password).also {
+        map[it.login]?.let {
+            throw IllegalArgumentException("Account already exists")
+        }
         map[it.login] = it
     }
 
