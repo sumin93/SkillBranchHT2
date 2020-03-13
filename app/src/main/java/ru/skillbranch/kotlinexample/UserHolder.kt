@@ -49,4 +49,8 @@ object UserHolder {
             map[login] = this
         }
     }
+
+    fun requestAccessCode(rawPhone: String) {
+        map[getMsisdn(rawPhone)]?.changeAccessCode(rawPhone)
+    }
 }

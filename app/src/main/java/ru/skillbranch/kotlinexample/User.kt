@@ -82,10 +82,7 @@ class User private constructor(
         meta = mapOf("auth" to "sms")
     ) {
         if (!isPhoneValid(rawPhone)) throw IllegalArgumentException("Phone is incorrect")
-        val code = generateAccessCode()
-        passwordHash = encrypt(code)
-        accessCode = code
-        sendAccessCodeToUser(rawPhone, code)
+        changeAccessCode(rawPhone)
     }
 
     init {
@@ -104,6 +101,13 @@ class User private constructor(
         } else {
             throw IllegalArgumentException("Wrong old password")
         }
+    }
+
+    fun changeAccessCode(rawPhone: String) {
+        val code = generateAccessCode()
+        passwordHash = encrypt(code)
+        accessCode = code
+        sendAccessCodeToUser(rawPhone, code)
     }
 
     private fun isPhoneValid(phone: String): Boolean {
