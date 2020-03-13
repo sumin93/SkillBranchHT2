@@ -11,7 +11,7 @@ object UserHolder {
         email: String,
         password: String
     ): User = User.makeUser(fullName, email = email, password = password).also {
-        saveNewUser(it)
+        saveNewUser(it, "email")
     }
 
     fun loginUser(login: String, password: String): String? {
@@ -33,7 +33,7 @@ object UserHolder {
 
     fun registerUserByPhone(fullName: String, phone: String): User {
         return User.makeUser(fullName, phone = phone).also {
-            saveNewUser(it)
+            saveNewUser(it, "phone")
         }
     }
 
@@ -41,10 +41,10 @@ object UserHolder {
         return "+" + phone.filter { it.isDigit() }
     }
 
-    private fun saveNewUser(user: User) {
+    private fun saveNewUser(user: User, method: String) {
         with(user) {
             map[login]?.let {
-                throw IllegalArgumentException("A user with this email already exists")
+                throw IllegalArgumentException("A user with this $method already exists")
             }
             map[login] = this
         }
