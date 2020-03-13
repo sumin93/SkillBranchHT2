@@ -81,7 +81,7 @@ class User private constructor(
         rawPhone = rawPhone,
         meta = mapOf("auth" to "sms")
     ) {
-        if (!isPhoneValid(rawPhone)) throw IllegalArgumentException("Phone is incorrect")
+        if (!isPhoneValid(rawPhone)) throw IllegalArgumentException("Enter a valid phone number starting with a + and containing 11 digits")
         changeAccessCode(rawPhone)
     }
 
@@ -112,7 +112,7 @@ class User private constructor(
 
     private fun isPhoneValid(phone: String): Boolean {
         val digits = phone.filter { it.isDigit() }
-        if (digits.length != 11 || !phone.startsWith("+")) return false
+        if (digits.length != 11 || !phone.startsWith("+") || phone.any { it.isLetter() }) return false
         return true
     }
 

@@ -44,7 +44,7 @@ object UserHolder {
     private fun saveNewUser(user: User) {
         with(user) {
             map[login]?.let {
-                throw IllegalArgumentException("Account already exists")
+                throw IllegalArgumentException("A user with this email already exists")
             }
             map[login] = this
         }
